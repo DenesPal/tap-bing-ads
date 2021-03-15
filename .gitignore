@@ -95,3 +95,7 @@ ENV/
 # Singer files
 *.config.json
 *.catalog.json
+
+# IDE
+.idea/
+
