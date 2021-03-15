@@ -3,6 +3,7 @@
 import asyncio
 import json
 import csv
+import os
 import sys
 import re
 import io
@@ -21,6 +22,9 @@ import backoff
 
 from tap_bing_ads import reports
 from tap_bing_ads.exclusions import EXCLUSIONS
+
+# Connection timeout option for the SUDS client, transport options passed only if the default transport is used
+DEFAULT_TRANSPORT_CONNECTION_TIMEOUT = 300
 
 LOGGER = singer.get_logger()
 
@@ -88,6 +92,8 @@ def log_service_call(service_method, account_id):
 
 class CustomServiceClient(ServiceClient):
     def __init__(self, name, **kwargs):
+        kwargs.setdefault('timeout', DEFAULT_TRANSPORT_CONNECTION_TIMEOUT)
+        kwargs.setdefault('environment', os.environ.get('BINGADS_ENVIRONMENT', 'production'))
         return super().__init__(name, 'v13', **kwargs)
 
     def __getattr__(self, name):
